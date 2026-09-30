@@ -40,6 +40,7 @@ const api = {
   getDisplays: (): Promise<DisplayInfo[]> => ipcRenderer.invoke('displays:get'),
   configureOutput: (config: OutputConfig): void => ipcRenderer.send('output:configure', config),
   showOutput: (): void => ipcRenderer.send('output:show'),
+  toggleOutput: (): void => ipcRenderer.send('output:toggle'),
   setPreview: (enabled: boolean): void => ipcRenderer.send('preview:set', enabled),
   sendOutputCommand: (cmd: OutputCommand): void => ipcRenderer.send('output:command', cmd),
   onOutputStatus: (cb: (status: OutputStatus) => void) => subscribe('output:status', cb),
@@ -48,6 +49,7 @@ const api = {
   onOutputModeChanged: (cb: (config: OutputConfig) => void) => subscribe('output:modeChanged', cb),
   onDisplaysChanged: (cb: () => void) => subscribe('displays:changed', cb),
   onPreviewFrame: (cb: (dataUrl: string) => void) => subscribe('preview:frame', cb),
+  onOutputVisibilityChanged: (cb: (visible: boolean) => void) => subscribe('output:visibilityChanged', cb),
   onHotkey: (cb: (action: string) => void) => subscribe('hotkey', (data: unknown) => {
     if (typeof data === 'string') cb(data.split(':')[1] ?? '');
   }),

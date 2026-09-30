@@ -25,6 +25,8 @@ let state: AppState;
 let mediaBase = '';
 /** 見つからないローカルファイルのパス */
 const missing = new Set<string>();
+/** 出力ウィンドウが表示されているか */
+let outputVisible = true;
 
 function save(): void {
   api.saveState(state);
@@ -36,6 +38,11 @@ function toast(message: string, kind: 'error' | 'info' = 'error'): void {
   el.textContent = message;
   $('toasts').append(el);
   setTimeout(() => el.remove(), kind === 'error' ? 8000 : 4000);
+}
+
+function updateOutputButtonText(): void {
+  const btn = $<HTMLButtonElement>('btn-toggle-output');
+  btn.textContent = `出力ウィンドウ: ${outputVisible ? '表示' : '非表示'}`;
 }
 
 function sendOut(cmd: OutputCommand): void {
@@ -715,6 +722,7 @@ function setupHotkeys(): void {
 
 function renderAll(): void {
   renderOutputControls();
+  updateOutputButtonText();
   renderMainList();
   renderMainStatus();
   renderBgmList();
@@ -826,7 +834,7 @@ function setupControls(): void {
   // 出力
   $('output-mode').addEventListener('change', applyOutputSettings);
   $('output-display').addEventListener('change', applyOutputSettings);
-  $('btn-show-output').addEventListener('click', () => api.showOutput());
+  $('btn-toggle-output').addEventListener('click', () => api.toggleOutput());
 
   setupList('main', $('main-list'));
   setupList('bgm', $('bgm-list'));
@@ -868,6 +876,11 @@ async function init(): Promise<void> {
     else if (action === 'mainNext') nextMain();
     else if (action === 'mainPrev') prevMain();
     else if (action === 'bgmToggle') bgm.toggle(selectedBgmId ?? undefined);
+    else if (action === 'toggleOutput') api.toggleOutput();
+  });
+  api.onOutputVisibilityChanged((visible) => {
+    outputVisible = visible;
+    updateOutputButtonText();
   });
 
   await refreshDisplays();

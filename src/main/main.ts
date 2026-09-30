@@ -7,6 +7,8 @@ import {
   dialog,
   globalShortcut,
   ipcMain,
+  Menu,
+  MenuItem,
   net,
   screen,
   type IpcMainEvent,
@@ -202,6 +204,28 @@ function createOutputWindow(): void {
     if (!win.isDestroyed()) win.reload();
   });
 
+  // 右クリックメニュー
+  win.webContents.on('context-menu', () => {
+    const menu = new Menu();
+    menu.append(
+      new MenuItem({
+        label: '出力ウィンドウを隠す',
+        click: () => {
+          win.hide();
+          sendToControl('output:visibilityChanged', false);
+        },
+      }),
+    );
+    menu.append(
+      new MenuItem({
+        label: '開発者ツールを開く',
+        accelerator: 'F12',
+        click: () => win.webContents.toggleDevTools(),
+      }),
+    );
+    menu.popup();
+  });
+
   win.loadURL(`${server.origin}/app/output/index.html`);
 }
 
@@ -278,6 +302,7 @@ function registerGlobalShortcuts(): void {
     [`${mod}+B`]: () => sendToControl('hotkey:bgmToggle'),
     [`${mod}+Right`]: () => sendToControl('hotkey:mainNext'),
     [`${mod}+Left`]: () => sendToControl('hotkey:mainPrev'),
+    [`${mod}+O`]: () => sendToControl('hotkey:toggleOutput'),
   };
 
   electronLocalShortcut.register(control, Object.keys(shortcuts), (e) => {
@@ -363,6 +388,16 @@ function registerIpc(): void {
     if (!fromControl(e) || !output) return;
     output.showInactive();
     output.moveTop();
+  });
+  ipcMain.on('output:toggle', (e) => {
+    if (!fromControl(e) || !output) return;
+    if (output.isVisible()) {
+      output.hide();
+    } else {
+      output.showInactive();
+      output.moveTop();
+    }
+    sendToControl('output:visibilityChanged', !output.isVisible());
   });
   ipcMain.on('output:command', (e, cmd: OutputCommand) => {
     if (fromControl(e)) output?.webContents.send('output:command', cmd);
