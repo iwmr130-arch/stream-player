@@ -9,16 +9,18 @@
   <header class="topbar">
     <div class="brand">StreamPlayer</div>
     <div class="output-controls">
-      <label>出力
-        <select id="output-mode">
-          <option value="window">ウィンドウ（画面共有用）</option>
-          <option value="fullscreen">全画面（配信用）</option>
+      <div class="output-group">
+        <label class="output-label">出力モード</label>
+        <select id="output-mode" class="output-select">
+          <option value="window">ウィンドウ（Zoom等で画面共有）</option>
+          <option value="fullscreen">全画面（配信機材に出力）</option>
         </select>
-      </label>
-      <label id="output-display-label">表示先
-        <select id="output-display"></select>
-      </label>
-      <button id="btn-show-output" type="button">出力ウィンドウを表示</button>
+      </div>
+      <div class="output-group" id="output-display-group">
+        <label class="output-label">出力先ディスプレイ</label>
+        <select id="output-display" class="output-select"></select>
+      </div>
+      <button id="btn-show-output" type="button" class="output-btn">出力ウィンドウを表示</button>
     </div>
     <button id="btn-settings" type="button">設定</button>
   </header>

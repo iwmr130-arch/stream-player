@@ -113,19 +113,45 @@ input[type='range'] {
 .output-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   margin-left: auto;
+  padding: 0 12px;
 }
 
-.output-controls label {
+.output-group {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--muted);
+  flex-direction: column;
+  gap: 4px;
 }
 
-.output-controls select {
-  color: var(--text);
+.output-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.output-select {
+  padding: 6px 10px !important;
+  min-width: 200px;
+  color: var(--text) !important;
+  border-color: var(--accent) !important;
+  background: var(--panel-2) !important;
+  font-weight: 500;
+}
+
+.output-select:hover {
+  border-color: var(--accent-2) !important;
+}
+
+.output-btn {
+  padding: 6px 16px;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 500;
+  font-size: 12px;
 }
 
 /* ---------------------------------------------------------------- パネル */

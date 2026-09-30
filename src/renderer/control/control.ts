@@ -490,7 +490,7 @@ async function refreshDisplays(): Promise<void> {
 function renderOutputControls(): void {
   const s = state.settings;
   $<HTMLSelectElement>('output-mode').value = s.outputMode;
-  $('output-display-label').hidden = s.outputMode !== 'fullscreen';
+  $('output-display-group').hidden = s.outputMode !== 'fullscreen';
 }
 
 function applyOutputSettings(): void {
