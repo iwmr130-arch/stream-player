@@ -66,5 +66,8 @@
         "releaseType": "release"
       }
     ]
+  },
+  "dependencies": {
+    "electron-localshortcut": "^3.2.1"
   }
 }

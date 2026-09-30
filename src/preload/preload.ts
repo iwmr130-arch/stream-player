@@ -48,6 +48,9 @@ const api = {
   onOutputModeChanged: (cb: (config: OutputConfig) => void) => subscribe('output:modeChanged', cb),
   onDisplaysChanged: (cb: () => void) => subscribe('displays:changed', cb),
   onPreviewFrame: (cb: (dataUrl: string) => void) => subscribe('preview:frame', cb),
+  onHotkey: (cb: (action: string) => void) => subscribe('hotkey', (data: unknown) => {
+    if (typeof data === 'string') cb(data.split(':')[1] ?? '');
+  }),
 
   // 出力ウィンドウ用
   onOutputCommand: (cb: (cmd: OutputCommand) => void) => subscribe('output:command', cb),

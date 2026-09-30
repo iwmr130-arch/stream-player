@@ -5,6 +5,7 @@ import {
   app,
   BrowserWindow,
   dialog,
+  globalShortcut,
   ipcMain,
   net,
   screen,
@@ -12,6 +13,7 @@ import {
   type Rectangle,
   type WebContents,
 } from 'electron';
+import electronLocalShortcut from 'electron-localshortcut';
 import { AUDIO_EXTS, IMAGE_EXTS, VIDEO_EXTS, parseOnlineUrl } from '../shared/media';
 import type {
   AppState,
@@ -153,6 +155,7 @@ function createControlWindow(): void {
   // 操作ウィンドウを閉じたらアプリを終了する
   win.on('close', () => {
     quitting = true;
+    unregisterGlobalShortcuts();
   });
   win.on('closed', () => {
     control = null;
@@ -160,6 +163,7 @@ function createControlWindow(): void {
   });
 
   win.loadURL(`${server.origin}/app/control/index.html`);
+  win.webContents.on('did-finish-load', () => registerGlobalShortcuts());
 }
 
 function createOutputWindow(): void {
@@ -260,6 +264,31 @@ function notifyDisplaysChanged(): void {
 
 function sendToControl(channel: string, ...args: unknown[]): void {
   if (control && !control.isDestroyed()) control.webContents.send(channel, ...args);
+}
+
+// ---------------------------------------------------------------- グローバルホットキー
+
+function registerGlobalShortcuts(): void {
+  if (!control || control.isDestroyed()) return;
+
+  const mod = isMac ? 'Cmd' : 'Ctrl';
+  const shortcuts: Record<string, () => void> = {
+    [`${mod}+M`]: () => sendToControl('hotkey:mainToggle'),
+    [`${mod}+N`]: () => sendToControl('hotkey:mainStop'),
+    [`${mod}+B`]: () => sendToControl('hotkey:bgmToggle'),
+    [`${mod}+Right`]: () => sendToControl('hotkey:mainNext'),
+    [`${mod}+Left`]: () => sendToControl('hotkey:mainPrev'),
+  };
+
+  electronLocalShortcut.register(control, Object.keys(shortcuts), (e) => {
+    const handler = shortcuts[e.key];
+    if (handler) handler();
+  });
+}
+
+function unregisterGlobalShortcuts(): void {
+  if (!control || control.isDestroyed()) return;
+  electronLocalShortcut.unregisterAll(control);
 }
 
 // ---------------------------------------------------------------- プレビュー

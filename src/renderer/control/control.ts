@@ -854,6 +854,13 @@ async function init(): Promise<void> {
   api.onPreviewFrame((dataUrl) => {
     ($('preview') as HTMLImageElement).src = dataUrl;
   });
+  api.onHotkey((action) => {
+    if (action === 'mainToggle') toggleMain();
+    else if (action === 'mainStop') stopMain();
+    else if (action === 'mainNext') nextMain();
+    else if (action === 'mainPrev') prevMain();
+    else if (action === 'bgmToggle') bgm.toggle(selectedBgmId ?? undefined);
+  });
 
   await refreshDisplays();
   await checkMissing();
