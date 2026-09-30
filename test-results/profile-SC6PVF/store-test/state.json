@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "main": [
+    {
+      "id": "a",
+      "kind": "local",
+      "title": "無音テスト",
+      "source": "C:\\Users\\iwmr1\\OneDrive\\ドキュメント\\動画再生ソフト\\test-results\\profile-SC6PVF\\無音.wav",
+      "endAction": "stop"
+    }
+  ],
+  "bgm": [
+    {
+      "id": "b",
+      "title": "BGMテスト",
+      "path": "C:\\Users\\iwmr1\\OneDrive\\ドキュメント\\動画再生ソフト\\test-results\\profile-SC6PVF\\無音.wav"
+    }
+  ],
+  "settings": {
+    "outputMode": "window",
+    "outputDisplayId": null,
+    "mainVolume": 80,
+    "mainMuted": false,
+    "bgmVolume": 50,
+    "bgmMuted": false,
+    "bgmLoopMode": "all",
+    "duckingMode": "lower",
+    "duckingLevel": 20,
+    "fadeMs": 0,
+    "idleImagePath": null,
+    "previewEnabled": true
+  }
+}

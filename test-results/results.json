@@ -1,0 +1,94 @@
+{
+  "date": "2026-09-30T08:28:22.916Z",
+  "results": [
+    {
+      "name": "YouTube 通常・短縮・Shorts・開始時刻",
+      "pass": true
+    },
+    {
+      "name": "Vimeo 公開・限定公開",
+      "pass": true
+    },
+    {
+      "name": "不正URL拒否",
+      "pass": true
+    },
+    {
+      "name": "設定補完・範囲補正・ID重複解消",
+      "pass": true
+    },
+    {
+      "name": "保存と再読込",
+      "pass": true
+    },
+    {
+      "name": "2画面起動・preload",
+      "pass": true
+    },
+    {
+      "name": "HTTP 全体取得・HEAD・Range・末尾Range・範囲外",
+      "pass": true
+    },
+    {
+      "name": "HTTP 不正トークン・相対パス・POST拒否",
+      "pass": true
+    },
+    {
+      "name": "WAV 再生と音声時の待機画面",
+      "pass": true
+    },
+    {
+      "name": "一時停止・シーク・再開",
+      "pass": true
+    },
+    {
+      "name": "再生中ループ切替",
+      "pass": true
+    },
+    {
+      "name": "停止と待機への復帰",
+      "pass": true
+    },
+    {
+      "name": "BGM 再生・一時停止",
+      "pass": true
+    },
+    {
+      "name": "BGM ダッキング lower・pause・none と復帰",
+      "pass": true
+    },
+    {
+      "name": "BGM 曲終了時に欠落ファイルを飛ばして次の有効曲へ進む",
+      "pass": true
+    },
+    {
+      "name": "出力を閉じて再表示",
+      "pass": true
+    },
+    {
+      "name": "BGM 修正確認 natural",
+      "pass": true
+    },
+    {
+      "name": "BGM 修正確認 consecutive",
+      "pass": true
+    },
+    {
+      "name": "BGM 修正確認 previous-paused",
+      "pass": true
+    },
+    {
+      "name": "BGM 修正確認 all-missing",
+      "pass": true
+    },
+    {
+      "name": "プレビュー画像受信",
+      "pass": true
+    },
+    {
+      "name": "レンダラ再読込後のリスト復元",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

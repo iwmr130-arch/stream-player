@@ -1,0 +1,516 @@
+:root {
+  --bg: #14161b;
+  --panel: #1c1f26;
+  --panel-2: #242832;
+  --border: #2f3441;
+  --text: #e6e8ee;
+  --muted: #8b92a3;
+  --accent: #4f8cff;
+  --accent-2: #3a6fd8;
+  --playing: #2ecc71;
+  --warn: #f5a623;
+  --error: #ff5f56;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.5 'Segoe UI', 'Hiragino Sans', 'Yu Gothic UI', 'Meiryo', system-ui, sans-serif;
+  overflow: hidden;
+}
+
+button,
+select,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-2);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+button.primary:hover {
+  background: var(--accent-2);
+}
+
+button.icon {
+  width: 40px;
+  height: 34px;
+  padding: 0;
+  font-size: 15px;
+  font-variant-emoji: text;
+}
+
+button.icon.small {
+  width: 32px;
+  height: 28px;
+  font-size: 13px;
+  font-variant-emoji: emoji;
+}
+
+select,
+input[type='text'],
+input[type='number'] {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-2);
+}
+
+input[type='range'] {
+  accent-color: var(--accent);
+}
+
+/* ---------------------------------------------------------------- 上部バー */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.brand {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.output-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.output-controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.output-controls select {
+  color: var(--text);
+}
+
+/* ---------------------------------------------------------------- パネル */
+
+.layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 12px;
+  padding: 12px;
+  min-height: 0;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.panel-head h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.sub {
+  color: var(--muted);
+}
+
+.duck {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(245, 166, 35, 0.15);
+  color: var(--warn);
+  font-size: 12px;
+}
+
+.preview {
+  position: relative;
+  width: 100%;
+  max-height: 30vh;
+  aspect-ratio: 16 / 9;
+  align-self: center;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #000;
+  overflow: hidden;
+}
+
+.preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.preview-off {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+
+.now {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.badge {
+  flex: none;
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.badge[data-state='playing'] {
+  background: rgba(46, 204, 113, 0.15);
+  color: var(--playing);
+}
+
+.badge[data-state='error'] {
+  background: rgba(255, 95, 86, 0.15);
+  color: var(--error);
+}
+
+.badge[data-state='ducked'],
+.badge[data-state='loading'] {
+  background: rgba(245, 166, 35, 0.15);
+  color: var(--warn);
+}
+
+.now-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: 600;
+}
+
+.seek {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.seek input {
+  flex: 1;
+}
+
+.time {
+  min-width: 44px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.volume {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.volume input {
+  width: 110px;
+}
+
+.vol-value {
+  min-width: 26px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.add-row {
+  display: flex;
+  gap: 6px;
+}
+
+.add-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------- プレイリスト */
+
+.playlist {
+  flex: 1;
+  min-height: 80px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+.playlist:empty::before {
+  content: attr(data-empty);
+  display: block;
+  padding: 24px 8px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.playlist.drop-target {
+  border-color: var(--accent);
+}
+
+.playlist li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  cursor: default;
+}
+
+.playlist li:hover {
+  background: var(--panel-2);
+}
+
+.playlist li.selected {
+  background: rgba(79, 140, 255, 0.14);
+}
+
+.playlist li.current .title {
+  color: var(--playing);
+  font-weight: 600;
+}
+
+.playlist li.missing .title {
+  color: var(--error);
+  text-decoration: line-through;
+}
+
+.playlist li.drop-before {
+  border-top-color: var(--accent);
+}
+
+.playlist li.drop-after {
+  border-bottom-color: var(--accent);
+}
+
+.playlist .num {
+  width: 22px;
+  color: var(--muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.playlist .kind {
+  flex: none;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.playlist .kind.youtube {
+  color: #ff6b6b;
+}
+
+.playlist .kind.vimeo {
+  color: #1ab7ea;
+}
+
+.playlist .title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.playlist select {
+  padding: 1px 4px;
+  font-size: 12px;
+}
+
+.playlist .remove {
+  padding: 0 8px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+}
+
+.playlist .remove:hover {
+  color: var(--error);
+}
+
+/* ---------------------------------------------------------------- 下部 */
+
+.statusbar {
+  display: flex;
+  gap: 16px;
+  padding: 4px 16px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.missing-hint {
+  margin-left: auto;
+  color: var(--error);
+}
+
+.toasts {
+  position: fixed;
+  right: 16px;
+  bottom: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 420px;
+}
+
+.toast {
+  padding: 10px 14px;
+  border-left: 4px solid var(--error);
+  border-radius: 6px;
+  background: var(--panel-2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.toast.info {
+  border-left-color: var(--accent);
+}
+
+/* ---------------------------------------------------------------- 設定 */
+
+dialog {
+  width: min(560px, 90vw);
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px;
+}
+
+.settings h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+legend {
+  padding: 0 4px;
+  color: var(--muted);
+}
+
+.settings label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings .row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings .path {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--muted);
+}
+
+.settings input[type='number'] {
+  width: 72px;
+}
+
+.note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
