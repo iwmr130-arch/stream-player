@@ -175,7 +175,7 @@ function createOutputWindow(): void {
     frame: false,
     title: 'StreamPlayer 出力',
     backgroundColor: '#000000',
-    show: false,
+    show: false, // 起動時は非表示
     webPreferences: webPreferences(),
   });
   output = win;

@@ -25,8 +25,8 @@ let state: AppState;
 let mediaBase = '';
 /** 見つからないローカルファイルのパス */
 const missing = new Set<string>();
-/** 出力ウィンドウが表示されているか */
-let outputVisible = true;
+/** 出力ウィンドウが表示されているか（起動時は非表示） */
+let outputVisible = false;
 
 function save(): void {
   api.saveState(state);

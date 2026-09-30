@@ -98,24 +98,26 @@ input[type='range'] {
 
 .topbar {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  align-items: flex-end;
+  gap: 12px;
   padding: 8px 16px;
   border-bottom: 1px solid var(--border);
   background: var(--panel);
+  min-height: 64px;
 }
 
 .brand {
   font-weight: 700;
   letter-spacing: 0.02em;
+  margin-bottom: 8px;
 }
 
 .output-controls {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  align-items: flex-end;
+  gap: 12px;
   margin-left: auto;
-  padding: 0 12px;
+  padding: 0;
 }
 
 .output-group {
@@ -134,7 +136,8 @@ input[type='range'] {
 
 .output-select {
   padding: 6px 10px !important;
-  min-width: 200px;
+  min-width: 180px;
+  height: 32px;
   color: var(--text) !important;
   border-color: var(--accent) !important;
   background: var(--panel-2) !important;
@@ -147,11 +150,20 @@ input[type='range'] {
 
 .output-btn {
   padding: 6px 16px;
+  height: 32px;
+  display: flex;
+  align-items: center;
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
   font-weight: 500;
   font-size: 12px;
+}
+
+#btn-settings {
+  height: 32px;
+  padding: 6px 16px;
+  margin-bottom: 0;
 }
 
 /* ---------------------------------------------------------------- パネル */
