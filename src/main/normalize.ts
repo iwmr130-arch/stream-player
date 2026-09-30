@@ -76,5 +76,6 @@ function normalizeSettings(raw: unknown): Settings {
     fadeMs: num(s.fadeMs, 0, 10000, d.fadeMs),
     idleImagePath: str(s.idleImagePath),
     previewEnabled: bool(s.previewEnabled, d.previewEnabled),
+    teleopEnabled: bool(s.teleopEnabled, d.teleopEnabled),
   };
 }

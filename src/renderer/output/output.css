@@ -46,3 +46,44 @@ body[data-mode='fullscreen'] {
 body[data-mode='window'] {
   -webkit-app-region: drag;
 }
+
+/* テロップ */
+.teleop {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.teleop:not([hidden]) {
+  opacity: 1;
+}
+
+.teleop-inner {
+  text-align: center;
+  padding: 24px 32px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.teleop-title {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #fff;
+  max-width: 80vw;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.teleop-time {
+  font-size: 20px;
+  color: #aaa;
+  margin-top: 12px;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Courier New', monospace;
+}

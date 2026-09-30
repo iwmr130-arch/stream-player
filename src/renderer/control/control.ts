@@ -518,6 +518,7 @@ function renderSettings(): void {
   $('set-idle-image').textContent = s.idleImagePath ? baseName(s.idleImagePath) : '黒い画面';
   $('set-idle-image').title = s.idleImagePath ?? '';
   $<HTMLInputElement>('set-preview').checked = s.previewEnabled;
+  $<HTMLInputElement>('set-teleop').checked = s.teleopEnabled;
   $('set-missing-count').textContent = missing.size > 0 ? `${missing.size} 件見つかりません` : '';
 }
 
@@ -566,6 +567,12 @@ function setupSettings(): void {
     state.settings.previewEnabled = (e.target as HTMLInputElement).checked;
     save();
     applyPreviewSetting();
+  });
+
+  $('set-teleop').addEventListener('change', (e) => {
+    state.settings.teleopEnabled = (e.target as HTMLInputElement).checked;
+    save();
+    sendOut({ type: 'teleopEnabled', enabled: state.settings.teleopEnabled });
   });
 
   $('set-export').addEventListener('click', async () => {
@@ -732,6 +739,7 @@ function applyAllSettings(): void {
   sendIdleImage();
   bgm.applyVolume();
   applyPreviewSetting();
+  sendOut({ type: 'teleopEnabled', enabled: state.settings.teleopEnabled });
 }
 
 function setupControls(): void {

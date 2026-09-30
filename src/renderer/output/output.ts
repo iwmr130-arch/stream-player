@@ -14,6 +14,9 @@ const layers = {
   vimeo: $('vimeo-layer'),
 };
 const idleImage = $('idle-image') as HTMLImageElement;
+const teleop = $('teleop');
+const teleopTitle = $('teleop-title');
+const teleopTime = $('teleop-time');
 
 let mediaBase = '';
 let player: Player | null = null;
@@ -21,7 +24,28 @@ let player: Player | null = null;
 let loadSeq = 0;
 let volume = 80;
 let muted = false;
+let teleopEnabled = false;
+let teleopTimer: number | null = null;
 let status: OutputStatus = { itemId: null, state: 'idle', currentTime: 0, duration: 0 };
+
+function formatTime(seconds: number): string {
+  if (!Number.isFinite(seconds) || seconds < 0) seconds = 0;
+  const s = Math.floor(seconds);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = String(s % 60).padStart(2, '0');
+  return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${sec}` : `${m}:${sec}`;
+}
+
+function showTeleop(): void {
+  if (!teleopEnabled) return;
+  teleop.hidden = false;
+  if (teleopTimer !== null) clearTimeout(teleopTimer);
+  teleopTimer = window.setTimeout(() => {
+    teleop.hidden = true;
+    teleopTimer = null;
+  }, 4000);
+}
 
 function report(patch: Partial<OutputStatus>): void {
   status = { ...status, error: undefined, ...patch };
@@ -30,6 +54,13 @@ function report(patch: Partial<OutputStatus>): void {
     status.duration = player.duration();
   }
   api.sendOutputStatus(status);
+
+  // テロップの更新
+  if (teleopEnabled && status.state === 'playing') {
+    teleopTitle.textContent = status.title ?? '—';
+    teleopTime.textContent = `${formatTime(status.currentTime)} / ${formatTime(status.duration)}`;
+    showTeleop();
+  }
 }
 
 function teardown(): void {
@@ -107,6 +138,10 @@ function handle(cmd: OutputCommand): void {
         idleImage.removeAttribute('src');
         idleImage.hidden = true;
       }
+      break;
+    case 'teleopEnabled':
+      teleopEnabled = cmd.enabled;
+      if (!cmd.enabled) teleop.hidden = true;
       break;
   }
 }

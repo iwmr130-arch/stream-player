@@ -38,6 +38,7 @@ export interface Settings {
   fadeMs: number;
   idleImagePath: string | null;
   previewEnabled: boolean;
+  teleopEnabled: boolean;
 }
 
 export interface AppState {
@@ -60,6 +61,7 @@ export const DEFAULT_SETTINGS: Settings = {
   fadeMs: 1000,
   idleImagePath: null,
   previewEnabled: true,
+  teleopEnabled: true,
 };
 
 /** 操作ウィンドウ → 出力ウィンドウ */
@@ -71,7 +73,8 @@ export type OutputCommand =
   | { type: 'seek'; time: number }
   | { type: 'volume'; volume: number; muted: boolean }
   | { type: 'setLoop'; loop: boolean }
-  | { type: 'idleImage'; path: string | null };
+  | { type: 'idleImage'; path: string | null }
+  | { type: 'teleopEnabled'; enabled: boolean };
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
 
