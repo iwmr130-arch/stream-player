@@ -2,7 +2,7 @@
 
 /** メインの項目を再生し終えたときの動作 */
 export type EndAction = 'stop' | 'next' | 'loop';
-export type MainItemKind = 'local' | 'youtube' | 'vimeo' | 'browser';
+export type MainItemKind = 'local' | 'youtube' | 'vimeo';
 
 export interface MainItem {
   id: string;
@@ -74,8 +74,7 @@ export type OutputCommand =
   | { type: 'volume'; volume: number; muted: boolean }
   | { type: 'setLoop'; loop: boolean }
   | { type: 'idleImage'; path: string | null }
-  | { type: 'teleopEnabled'; enabled: boolean }
-  | { type: 'browserSeek'; time: number };
+  | { type: 'teleopEnabled'; enabled: boolean };
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
 

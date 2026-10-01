@@ -36,28 +36,6 @@
         <img id="preview" alt="出力画面のプレビュー" hidden>
         <div id="preview-off" class="preview-off">プレビューは停止中です</div>
       </div>
-      <!-- ブラウザモード -->
-      <div class="browser-mode" id="browser-mode">
-        <div class="browser-head">
-          <label>URL を入力（YouTube / Vimeo）
-            <input id="browser-url" type="text" placeholder="https://www.youtube.com/watch?v=... または Vimeo URL">
-          </label>
-          <button id="browser-load" type="button">読み込み</button>
-        </div>
-        <div class="browser-player">
-          <div id="browser-player-youtube" class="browser-frame"></div>
-          <div id="browser-player-vimeo" class="browser-frame"></div>
-        </div>
-        <div class="browser-controls">
-          <button id="browser-play" type="button" class="icon primary" title="再生">▶</button>
-          <button id="browser-pause" type="button" class="icon" title="一時停止">⏸</button>
-          <span id="browser-time" class="time">0:00</span>
-          <input id="browser-seek" type="range" min="0" max="1000" value="0" disabled>
-          <span id="browser-duration" class="time">0:00</span>
-        </div>
-        <!-- ブラウザプレイリスト -->
-        <ul id="browser-list" class="playlist" data-empty="ブラウザプレイリストが空です"></ul>
-      </div>
       <div class="now">
         <span id="main-state" class="badge">待機</span>
         <span id="main-title" class="now-title">—</span>
@@ -81,10 +59,6 @@
       <div class="add-row">
         <button id="main-add-file" type="button">＋ ファイル</button>
         <input id="main-url" type="text" placeholder="YouTube / Vimeo の URL を貼り付けて Enter">
-        <select id="main-url-mode" hidden>
-          <option value="normal">通常再生</option>
-          <option value="browser">ブラウザモード</option>
-        </select>
         <button id="main-add-url" type="button">URL を追加</button>
       </div>
       <ul id="main-list" class="playlist" data-empty="ここに動画・音声ファイルや URL をドラッグ＆ドロップ"></ul>

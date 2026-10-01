@@ -92,18 +92,6 @@ function load(item: MainItem, autoplay: boolean): void {
     player = new LocalPlayer(layers.video, mediaUrl(mediaBase, item.source), opts, events);
     return;
   }
-  if (item.kind === 'browser') {
-    const ref = parseOnlineUrl(item.source);
-    if (!ref) {
-      report({ state: 'error', error: 'URL を読み取れません' });
-      return;
-    }
-    player =
-      ref.kind === 'youtube'
-        ? new YouTubePlayer(layers.youtube, ref, opts, events)
-        : new VimeoPlayer(layers.vimeo, ref, opts, events);
-    return;
-  }
   const ref = parseOnlineUrl(item.source);
   if (!ref) {
     report({ state: 'error', error: 'URL を読み取れません' });
@@ -154,9 +142,6 @@ function handle(cmd: OutputCommand): void {
     case 'teleopEnabled':
       teleopEnabled = cmd.enabled;
       if (!cmd.enabled) teleop.hidden = true;
-      break;
-    case 'browserSeek':
-      player?.seek(cmd.time);
       break;
   }
 }

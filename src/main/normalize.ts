@@ -42,7 +42,7 @@ export function normalizeState(raw: unknown): AppState {
     if (!source) continue;
     main.push({
       id: uniqueId(it.id),
-      kind: oneOf<MainItemKind>(it.kind, ['local', 'youtube', 'vimeo', 'browser'], 'local'),
+      kind: oneOf<MainItemKind>(it.kind, ['local', 'youtube', 'vimeo'], 'local'),
       title: str(it.title) ?? titleFromPath(source),
       source,
       endAction: oneOf<EndAction>(it.endAction, ['stop', 'next', 'loop'], 'stop'),
