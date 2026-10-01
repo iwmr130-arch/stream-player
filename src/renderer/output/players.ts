@@ -23,7 +23,6 @@ export interface Player {
   seek(time: number): void;
   setVolume(volume: number, muted: boolean): void;
   setLoop(loop: boolean): void;
-  setSubtitle?(lang: string): void;
   currentTime(): number;
   duration(): number;
   destroy(): void;
@@ -248,23 +247,6 @@ export class YouTubePlayer implements Player {
   }
   setLoop(loop: boolean): void {
     this.loop = loop;
-  }
-  setSubtitle(lang: string): void {
-    if (!this.ready || !this.player) return;
-    try {
-      const player = this.player as any;
-      if (lang === '') {
-        // 字幕オフ
-        player.setOption?.('captions', 'fontSize', -1);
-      } else {
-        // 字幕を有効にして言語を設定
-        player.loadModule?.('captions');
-        player.setOption?.('captions', 'fontSize', 0);
-        player.setOption?.('captions', 'lang', lang);
-      }
-    } catch {
-      // 字幕API非対応
-    }
   }
   currentTime(): number {
     return this.ready ? (this.player?.getCurrentTime() ?? 0) : 0;

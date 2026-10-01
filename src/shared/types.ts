@@ -74,8 +74,7 @@ export type OutputCommand =
   | { type: 'volume'; volume: number; muted: boolean }
   | { type: 'setLoop'; loop: boolean }
   | { type: 'idleImage'; path: string | null }
-  | { type: 'teleopEnabled'; enabled: boolean }
-  | { type: 'subtitle'; lang: string };
+  | { type: 'teleopEnabled'; enabled: boolean };
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
 
