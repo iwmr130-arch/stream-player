@@ -243,6 +243,7 @@ function createBrowserWindow(): void {
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload', 'preload.js'),
       sandbox: true,
+      webviewTag: true,
     },
     icon: path.join(__dirname, '..', '..', 'assets', 'icon.png'),
   });

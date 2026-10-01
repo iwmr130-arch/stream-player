@@ -26,12 +26,20 @@ function loadUrl(): void {
   webview = document.createElement('webview');
   webview.src = url;
   webview.style.cssText = 'width: 100%; height: 100%;';
-  webview.addEventListener('did-fail-load', () => {
-    alert('ページの読み込みに失敗しました');
+
+  webview.addEventListener('did-fail-load', (e: any) => {
+    console.error('Page load failed:', e);
+    alert(`ページの読み込みに失敗しました\nエラーコード: ${e.errorCode}`);
     container.textContent = 'URLを入力して [読み込み] を押してください';
   });
+
   webview.addEventListener('did-finish-load', () => {
-    console.log('Page loaded:', url);
+    console.log('Page loaded successfully:', url);
+  });
+
+  webview.addEventListener('crashed', () => {
+    console.error('Webview crashed');
+    alert('ウェブビューがクラッシュしました');
   });
 
   container.innerHTML = '';
