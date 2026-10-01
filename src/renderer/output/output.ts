@@ -26,7 +26,6 @@ let volume = 80;
 let muted = false;
 let teleopEnabled = false;
 let teleopTimer: number | null = null;
-let subtitleEnabled = true;
 let status: OutputStatus = { itemId: null, state: 'idle', currentTime: 0, duration: 0 };
 
 function formatTime(seconds: number): string {
@@ -144,26 +143,6 @@ function handle(cmd: OutputCommand): void {
       teleopEnabled = cmd.enabled;
       if (!cmd.enabled) teleop.hidden = true;
       break;
-    case 'toggleSubtitle':
-      subtitleEnabled = !subtitleEnabled;
-      applySubtitleSetting();
-      break;
-  }
-}
-
-function applySubtitleSetting(): void {
-  if (player && (player as any).loadModule) {
-    const p = player as any;
-    try {
-      p.loadModule('captions');
-      if (subtitleEnabled) {
-        p.setOption('captions', 'fontSize', 0);
-      } else {
-        p.setOption('captions', 'fontSize', -1);
-      }
-    } catch {
-      // API非対応
-    }
   }
 }
 

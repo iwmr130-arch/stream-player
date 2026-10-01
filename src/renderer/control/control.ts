@@ -784,11 +784,6 @@ function setupControls(): void {
     save();
   });
 
-  // 字幕ON/OFF
-  $('main-subtitle-toggle').addEventListener('click', () => {
-    sendOut({ type: 'toggleSubtitle' });
-  });
-
   $('main-add-file').addEventListener('click', async () => addMainPaths(await api.openMediaDialog('main')));
   const urlInput = $<HTMLInputElement>('main-url');
   const addUrl = () => {
