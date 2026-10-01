@@ -35,7 +35,7 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 const isMac = process.platform === 'darwin';
 const OUTPUT_DEFAULT_SIZE = { width: 960, height: 540 };
 const PREVIEW_INTERVAL_MS = 16; // プレビュー更新間隔（ミリ秒）約60fps
-const PREVIEW_WIDTH = 384;
+const PREVIEW_WIDTH = 960; // プレビュー幅（出力ウィンドウと同サイズ）
 
 let server: LocalServer;
 let store: Store;
