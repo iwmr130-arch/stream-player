@@ -784,6 +784,12 @@ function setupControls(): void {
     save();
   });
 
+  // 字幕言語選択
+  $<HTMLSelectElement>('main-subtitle-lang').addEventListener('change', (e) => {
+    const lang = (e.target as HTMLSelectElement).value;
+    sendOut({ type: 'subtitle', lang });
+  });
+
   $('main-add-file').addEventListener('click', async () => addMainPaths(await api.openMediaDialog('main')));
   const urlInput = $<HTMLInputElement>('main-url');
   const addUrl = () => {

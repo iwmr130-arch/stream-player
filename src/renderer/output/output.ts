@@ -143,6 +143,9 @@ function handle(cmd: OutputCommand): void {
       teleopEnabled = cmd.enabled;
       if (!cmd.enabled) teleop.hidden = true;
       break;
+    case 'subtitle':
+      player?.setSubtitle?.(cmd.lang);
+      break;
   }
 }
 
