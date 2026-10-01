@@ -400,6 +400,10 @@ input[type='range'] {
   min-width: 0;
 }
 
+.add-row select {
+  min-width: 100px;
+}
+
 /* ---------------------------------------------------------------- プレイリスト */
 
 .playlist {

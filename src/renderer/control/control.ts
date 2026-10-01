@@ -835,13 +835,39 @@ function setupControls(): void {
 
   $('main-add-file').addEventListener('click', async () => addMainPaths(await api.openMediaDialog('main')));
   const urlInput = $<HTMLInputElement>('main-url');
+  const modeSelect = $<HTMLSelectElement>('main-url-mode');
+
+  const updateModeSelect = () => {
+    const url = urlInput.value.trim();
+    const ref = url ? parseOnlineUrl(url) : null;
+    modeSelect.hidden = !ref;
+  };
+
   const addUrl = () => {
-    if (urlInput.value.trim() && addMainUrls(urlInput.value)) urlInput.value = '';
+    const url = urlInput.value.trim();
+    if (!url) return;
+    const ref = parseOnlineUrl(url);
+    if (!ref) {
+      // ローカルファイルでない場合は何もしない
+      return;
+    }
+    const mode = modeSelect.value as 'normal' | 'browser';
+    if (mode === 'browser') {
+      // ブラウザモードの場合、ブラウザURLフィールドに入力
+      $<HTMLInputElement>('browser-url').value = url;
+      loadBrowserUrl();
+    } else {
+      // 通常モード: プレイリストに追加
+      addMainUrls(url);
+    }
+    urlInput.value = '';
+    updateModeSelect();
   };
   $('main-add-url').addEventListener('click', addUrl);
   urlInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') addUrl();
   });
+  urlInput.addEventListener('input', updateModeSelect);
 
   // BGM
   $('bgm-play').addEventListener('click', () => bgm.toggle(selectedBgmId ?? undefined));
