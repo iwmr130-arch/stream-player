@@ -31,6 +31,7 @@ let outputVisible = false;
 let browserUrl = '';
 let browserKind: 'youtube' | 'vimeo' | null = null;
 let browserPlaying = false;
+let selectedBrowserId: string | null = null;
 
 function save(): void {
   api.saveState(state);
@@ -732,6 +733,7 @@ function renderAll(): void {
   renderBgmList();
   renderBgmStatus();
   renderVolumes();
+  renderBrowserList();
 }
 
 function renderVolumes(): void {
@@ -756,6 +758,73 @@ function applyAllSettings(): void {
 
 function updateBrowserPlayButton(): void {
   $('browser-play').dataset.playing = browserPlaying ? 'true' : 'false';
+}
+
+function playBrowserItem(item: MainItem): void {
+  if (item.kind !== 'browser') return;
+  selectedBrowserId = item.id;
+  browserUrl = item.source;
+  const ref = parseOnlineUrl(browserUrl);
+  if (!ref) {
+    toast('URLが無効です', 'error');
+    return;
+  }
+  browserKind = ref.kind;
+  renderBrowserPlayer();
+  renderBrowserList();
+  // 自動再生
+  browserPlaying = true;
+  updateBrowserPlayButton();
+  const playItem: MainItem = { ...item };
+  sendOut({ type: 'load', item: playItem, autoplay: true });
+}
+
+function renderBrowserList(): void {
+  const ul = $('browser-list');
+  const browserItems = state.main.filter((item) => item.kind === 'browser');
+
+  ul.innerHTML = '';
+
+  if (browserItems.length === 0) {
+    ul.dataset.empty = 'ブラウザプレイリストが空です';
+    return;
+  }
+
+  for (const item of browserItems) {
+    const li = document.createElement('li');
+    li.dataset.id = item.id;
+    if (item.id === selectedBrowserId) li.dataset.selected = 'true';
+
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'title';
+    titleSpan.textContent = item.title;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete icon small';
+    deleteBtn.textContent = '✕';
+    deleteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      state.main = state.main.filter((i) => i.id !== item.id);
+      if (selectedBrowserId === item.id) {
+        selectedBrowserId = state.main.find((i) => i.kind === 'browser')?.id ?? null;
+        if (selectedBrowserId) {
+          const nextItem = state.main.find((i) => i.id === selectedBrowserId);
+          if (nextItem) playBrowserItem(nextItem);
+        } else {
+          browserUrl = '';
+          browserKind = null;
+          renderBrowserPlayer();
+        }
+      }
+      save();
+      renderBrowserList();
+    });
+
+    li.appendChild(titleSpan);
+    li.appendChild(deleteBtn);
+    li.addEventListener('click', () => playBrowserItem(item));
+    ul.appendChild(li);
+  }
 }
 
 function loadBrowserUrl(): void {
@@ -853,9 +922,22 @@ function setupControls(): void {
     }
     const mode = modeSelect.value as 'normal' | 'browser';
     if (mode === 'browser') {
-      // ブラウザモードの場合、ブラウザURLフィールドに入力
-      $<HTMLInputElement>('browser-url').value = url;
-      loadBrowserUrl();
+      // ブラウザモードの場合、state.main に browser kind のアイテムを追加
+      const item: MainItem = {
+        id: newId(),
+        kind: 'browser',
+        title: ref.url,
+        source: url,
+        endAction: 'stop',
+      };
+      state.main.push(item);
+      save();
+      renderBrowserList();
+      // 最初に追加されたアイテムなら自動再生
+      if (!selectedBrowserId) {
+        selectedBrowserId = item.id;
+        playBrowserItem(item);
+      }
     } else {
       // 通常モード: プレイリストに追加
       addMainUrls(url);
