@@ -150,6 +150,47 @@ function handleOutputStatus(status: OutputStatus): void {
   updateDucking();
 }
 
+function renderPreviewBrowser(item: MainItem | undefined): void {
+  const previewDiv = $('preview-off').parentElement as HTMLElement;
+  const preview = $('preview') as HTMLImageElement;
+
+  if (!item || (item.kind !== 'youtube' && item.kind !== 'vimeo')) {
+    // ローカルファイルまたはアイテムがない場合
+    preview.hidden = false;
+    const iframe = previewDiv.querySelector('iframe');
+    if (iframe) iframe.remove();
+    return;
+  }
+
+  preview.hidden = true;
+
+  // 既存のiframeを削除
+  const existing = previewDiv.querySelector('iframe');
+  if (existing) existing.remove();
+
+  // YouTubeやVimeoの場合、iframeを作成
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'width: 100%; height: 100%; border: none;';
+  iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+  iframe.allowFullscreen = true;
+
+  if (item.kind === 'youtube') {
+    const match = item.source.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/);
+    const videoId = match?.[1];
+    if (videoId) {
+      iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=1&disablekb=1&fs=1&playsinline=1`;
+      previewDiv.appendChild(iframe);
+    }
+  } else if (item.kind === 'vimeo') {
+    const match = item.source.match(/vimeo\.com\/(\d+)/);
+    const videoId = match?.[1];
+    if (videoId) {
+      iframe.src = `https://player.vimeo.com/video/${videoId}`;
+      previewDiv.appendChild(iframe);
+    }
+  }
+}
+
 function renderMainStatus(): void {
   const item = state.main.find((i) => i.id === mainStatus.itemId);
   const badge = $('main-state');
@@ -157,6 +198,9 @@ function renderMainStatus(): void {
   badge.dataset.state = mainStatus.state;
   $('main-title').textContent = item?.title ?? '—';
   $('main-play').textContent = mainStatus.state === 'playing' ? '⏸' : '▶';
+
+  // プレビューをブラウザに置き換え
+  renderPreviewBrowser(item);
 
   const seek = $<HTMLInputElement>('main-seek');
   const { currentTime, duration } = mainStatus;
@@ -879,6 +923,9 @@ async function init(): Promise<void> {
   });
   api.onDisplaysChanged(() => void refreshDisplays());
   api.onPreviewFrame((dataUrl) => {
+    const item = state.main.find((i) => i.id === mainStatus.itemId);
+    // YouTubeやVimeoの場合はスクリーンショットを表示しない（iframeで表示）
+    if (item && (item.kind === 'youtube' || item.kind === 'vimeo')) return;
     ($('preview') as HTMLImageElement).src = dataUrl;
   });
   api.onHotkey((action) => {
