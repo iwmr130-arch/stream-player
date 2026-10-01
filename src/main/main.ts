@@ -48,6 +48,8 @@ let outputDisplayId: number | null = null;
 let previewEnabled = true;
 let previewTimer: NodeJS.Timeout | null = null;
 let previewBusy = false;
+/** ブラウザウィンドウ */
+let browser: BrowserWindow | null = null;
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -227,6 +229,40 @@ function createOutputWindow(): void {
   });
 
   win.loadURL(`${server.origin}/app/output/index.html`);
+}
+
+function createBrowserWindow(): void {
+  if (browser && !browser.isDestroyed()) {
+    browser.focus();
+    return;
+  }
+
+  const bounds = store.getWindowState().browser ?? { x: 100, y: 100, width: 1200, height: 800 };
+  const win = new BrowserWindow({
+    ...bounds,
+    webPreferences: {
+      preload: path.join(__dirname, '..', 'preload', 'preload.js'),
+      sandbox: true,
+    },
+    icon: path.join(__dirname, '..', '..', 'assets', 'icon.png'),
+  });
+
+  browser = win;
+  win.removeMenu();
+  win.once('ready-to-show', () => win.show());
+
+  const saveBounds = () => {
+    if (!win.isMinimized() && !win.isMaximized()) {
+      store.setWindowBounds('browser', win.getBounds());
+    }
+  };
+  win.on('resized', saveBounds);
+  win.on('moved', saveBounds);
+  win.on('closed', () => {
+    browser = null;
+  });
+
+  win.loadURL(`${server.origin}/app/browser/index.html`);
 }
 
 function leaveFullscreen(win: BrowserWindow): void {
@@ -412,6 +448,10 @@ function registerIpc(): void {
     if (!fromControl(e)) return;
     previewEnabled = enabled;
     updatePreviewTimer();
+  });
+
+  ipcMain.handle('browser:open', () => {
+    createBrowserWindow();
   });
 }
 

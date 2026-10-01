@@ -30,6 +30,7 @@ await Promise.all([
     entryPoints: {
       'control/control': 'src/renderer/control/control.ts',
       'output/output': 'src/renderer/output/output.ts',
+      'browser/browser': 'src/renderer/browser/browser.ts',
     },
     outdir: 'dist/renderer',
     platform: 'browser',
@@ -38,7 +39,7 @@ await Promise.all([
   }),
 ]);
 
-for (const page of ['control', 'output']) {
+for (const page of ['control', 'output', 'browser']) {
   await cp(`src/renderer/${page}`, `dist/renderer/${page}`, {
     recursive: true,
     filter: (src) => !src.endsWith('.ts'),

@@ -8,6 +8,7 @@ import { normalizeState } from './normalize';
 export interface WindowState {
   control?: Rectangle;
   output?: Rectangle;
+  browser?: Rectangle;
 }
 
 /** 書き込みをまとめて行うための JSON ファイル */

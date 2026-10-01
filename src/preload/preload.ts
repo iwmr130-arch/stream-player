@@ -50,6 +50,7 @@ const api = {
   onDisplaysChanged: (cb: () => void) => subscribe('displays:changed', cb),
   onPreviewFrame: (cb: (dataUrl: string) => void) => subscribe('preview:frame', cb),
   onOutputVisibilityChanged: (cb: (visible: boolean) => void) => subscribe('output:visibilityChanged', cb),
+  openBrowser: (): Promise<void> => ipcRenderer.invoke('browser:open'),
   onHotkey: (cb: (action: string) => void) => subscribe('hotkey', (data: unknown) => {
     if (typeof data === 'string') cb(data.split(':')[1] ?? '');
   }),

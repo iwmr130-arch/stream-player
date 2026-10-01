@@ -529,6 +529,16 @@ function renderSettings(): void {
   $('set-missing-count').textContent = missing.size > 0 ? `${missing.size} 件見つかりません` : '';
 }
 
+function setupBrowser(): void {
+  $('btn-browser').addEventListener('click', async () => {
+    try {
+      await api.openBrowser?.();
+    } catch (err) {
+      toast(`ブラウザを開けません: ${err}`, 'error');
+    }
+  });
+}
+
 function setupSettings(): void {
   const dialog = $<HTMLDialogElement>('settings-dialog');
   $('btn-settings').addEventListener('click', () => {
@@ -848,6 +858,7 @@ async function init(): Promise<void> {
   [mediaBase, state] = await Promise.all([api.getMediaBase(), api.loadState()]);
 
   setupControls();
+  setupBrowser();
   setupSettings();
   setupHotkeys();
 
