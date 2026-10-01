@@ -27,6 +27,10 @@ let mediaBase = '';
 const missing = new Set<string>();
 /** 出力ウィンドウが表示されているか（起動時は非表示） */
 let outputVisible = false;
+/** ブラウザモード: 再生中のYoutube/Vimeo動画 */
+let browserUrl = '';
+let browserKind: 'youtube' | 'vimeo' | null = null;
+let browserPlaying = false;
 
 function save(): void {
   api.saveState(state);
@@ -750,6 +754,52 @@ function applyAllSettings(): void {
   sendOut({ type: 'teleopEnabled', enabled: state.settings.teleopEnabled });
 }
 
+function updateBrowserPlayButton(): void {
+  $('browser-play').dataset.playing = browserPlaying ? 'true' : 'false';
+}
+
+function loadBrowserUrl(): void {
+  const urlInput = $<HTMLInputElement>('browser-url');
+  const url = urlInput.value.trim();
+  if (!url) {
+    toast('URLを入力してください', 'info');
+    return;
+  }
+  const ref = parseOnlineUrl(url);
+  if (!ref) {
+    toast('YouTubeまたはVimeoのURLを入力してください', 'error');
+    return;
+  }
+  browserUrl = url;
+  browserKind = ref.kind;
+  $('browser-mode').hidden = false;
+  renderBrowserPlayer();
+}
+
+function renderBrowserPlayer(): void {
+  const ytDiv = $('browser-player-youtube');
+  const vmDiv = $('browser-player-vimeo');
+  ytDiv.innerHTML = '';
+  vmDiv.innerHTML = '';
+
+  if (!browserUrl || !browserKind) return;
+
+  const ref = parseOnlineUrl(browserUrl);
+  if (!ref) return;
+
+  if (browserKind === 'youtube') {
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${ref.id}?enablejsapi=1`;
+    iframe.allow = 'autoplay';
+    ytDiv.appendChild(iframe);
+  } else if (browserKind === 'vimeo') {
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://player.vimeo.com/video/${ref.id}`;
+    iframe.allow = 'autoplay';
+    vmDiv.appendChild(iframe);
+  }
+}
+
 function setupControls(): void {
   // メイン
   $('main-play').addEventListener('click', toggleMain);
@@ -830,6 +880,20 @@ function setupControls(): void {
     save();
   });
   $('bgm-add-file').addEventListener('click', async () => addBgmPaths(await api.openMediaDialog('bgm')));
+
+  // ブラウザモード
+  $('browser-load').addEventListener('click', loadBrowserUrl);
+  $<HTMLInputElement>('browser-url').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') loadBrowserUrl();
+  });
+  $('browser-play').addEventListener('click', () => {
+    browserPlaying = true;
+    updateBrowserPlayButton();
+  });
+  $('browser-pause').addEventListener('click', () => {
+    browserPlaying = false;
+    updateBrowserPlayButton();
+  });
 
   // 出力
   $('output-mode').addEventListener('change', applyOutputSettings);
