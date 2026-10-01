@@ -772,7 +772,6 @@ function loadBrowserUrl(): void {
   }
   browserUrl = url;
   browserKind = ref.kind;
-  $('browser-mode').hidden = false;
   renderBrowserPlayer();
 }
 
