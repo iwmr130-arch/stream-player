@@ -17,6 +17,13 @@ const api = window.api;
 const isMac = api.platform === 'darwin';
 const MOD = isMac ? '⌘' : 'Ctrl+';
 
+declare global {
+  interface Window {
+    YT: any;
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
+
 function $<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
 }
@@ -56,6 +63,7 @@ let mainStatus: OutputStatus = { itemId: null, state: 'idle', currentTime: 0, du
 let currentMainId: string | null = null;
 let selectedMainId: string | null = null;
 let mainSeeking = false;
+let previewYouTubePlayer: any = null;
 
 const STATE_LABEL: Record<PlaybackState, string> = {
   idle: '待機',
@@ -159,6 +167,7 @@ function renderPreviewBrowser(item: MainItem | undefined): void {
     preview.hidden = false;
     const iframe = previewDiv.querySelector('iframe');
     if (iframe) iframe.remove();
+    previewYouTubePlayer = null;
     return;
   }
 
@@ -170,6 +179,7 @@ function renderPreviewBrowser(item: MainItem | undefined): void {
 
   // YouTubeやVimeoの場合、iframeを作成
   const iframe = document.createElement('iframe');
+  iframe.id = 'preview-player-iframe';
   iframe.style.cssText = 'width: 100%; height: 100%; border: none;';
   iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
   iframe.allowFullscreen = true;
@@ -180,6 +190,8 @@ function renderPreviewBrowser(item: MainItem | undefined): void {
     if (videoId) {
       iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=1&disablekb=1&fs=1&playsinline=1`;
       previewDiv.appendChild(iframe);
+      // YouTubeプレイヤーAPIが準備できるまで待機
+      setTimeout(() => setupYouTubePreviewSync(videoId), 1000);
     }
   } else if (item.kind === 'vimeo') {
     const match = item.source.match(/vimeo\.com\/(\d+)/);
@@ -189,6 +201,28 @@ function renderPreviewBrowser(item: MainItem | undefined): void {
       previewDiv.appendChild(iframe);
     }
   }
+}
+
+function setupYouTubePreviewSync(videoId: string): void {
+  const iframe = document.getElementById('preview-player-iframe') as HTMLIFrameElement;
+  if (!iframe || !window.YT) return;
+
+  previewYouTubePlayer = new window.YT.Player(iframe, {
+    events: {
+      onStateChange: (event: any) => {
+        // プレビューの再生状態が変わったら、出力ウィンドウに送信
+        const state = event.data;
+        if (state === window.YT.PlayerState.PLAYING) {
+          sendOut({ type: 'play' });
+        } else if (state === window.YT.PlayerState.PAUSED) {
+          sendOut({ type: 'pause' });
+        }
+      },
+      onError: (event: any) => {
+        console.error('Preview player error:', event.data);
+      },
+    },
+  });
 }
 
 function renderMainStatus(): void {
