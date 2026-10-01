@@ -889,10 +889,25 @@ function setupControls(): void {
   $('browser-play').addEventListener('click', () => {
     browserPlaying = true;
     updateBrowserPlayButton();
+    // 出力ウィンドウに再生を開始させる
+    const item: MainItem = {
+      id: 'browser-' + Date.now(),
+      kind: 'browser',
+      title: $<HTMLInputElement>('browser-url').value || 'ブラウザコンテンツ',
+      source: browserUrl,
+      endAction: 'stop',
+    };
+    sendOut({ type: 'load', item, autoplay: true });
   });
   $('browser-pause').addEventListener('click', () => {
     browserPlaying = false;
     updateBrowserPlayButton();
+    sendOut({ type: 'pause' });
+  });
+  const browserSeek = $<HTMLInputElement>('browser-seek');
+  browserSeek.addEventListener('change', () => {
+    const time = Number(browserSeek.value);
+    sendOut({ type: 'browserSeek', time });
   });
 
   // 出力
