@@ -64,6 +64,7 @@ let currentMainId: string | null = null;
 let selectedMainId: string | null = null;
 let mainSeeking = false;
 let previewYouTubePlayer: any = null;
+let lastPreviewItemId: string | null = null;
 
 const STATE_LABEL: Record<PlaybackState, string> = {
   idle: '待機',
@@ -168,8 +169,13 @@ function renderPreviewBrowser(item: MainItem | undefined): void {
     const iframe = previewDiv.querySelector('iframe');
     if (iframe) iframe.remove();
     previewYouTubePlayer = null;
+    lastPreviewItemId = null;
     return;
   }
+
+  // 同じアイテムの場合は再作成しない
+  if (lastPreviewItemId === item.id) return;
+  lastPreviewItemId = item.id;
 
   preview.hidden = true;
 
