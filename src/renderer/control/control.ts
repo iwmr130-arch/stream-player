@@ -162,73 +162,13 @@ function handleOutputStatus(status: OutputStatus): void {
 function renderPreviewBrowser(item: MainItem | undefined): void {
   const previewDiv = $('preview-off').parentElement as HTMLElement;
   const preview = $('preview') as HTMLImageElement;
+  const iframe = previewDiv.querySelector('iframe');
 
-  if (!item || (item.kind !== 'youtube' && item.kind !== 'vimeo')) {
-    // ローカルファイルまたはアイテムがない場合
-    preview.hidden = false;
-    const iframe = previewDiv.querySelector('iframe');
-    if (iframe) iframe.remove();
-    previewYouTubePlayer = null;
-    lastPreviewItemId = null;
-    return;
-  }
-
-  // 同じアイテムの場合は再作成しない
-  if (lastPreviewItemId === item.id) return;
-  lastPreviewItemId = item.id;
-
-  preview.hidden = true;
-
-  // 既存のiframeを削除
-  const existing = previewDiv.querySelector('iframe');
-  if (existing) existing.remove();
-
-  // YouTubeやVimeoの場合、iframeを作成
-  const iframe = document.createElement('iframe');
-  iframe.id = 'preview-player-iframe';
-  iframe.style.cssText = 'width: 100%; height: 100%; border: none;';
-  iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-  iframe.allowFullscreen = true;
-
-  if (item.kind === 'youtube') {
-    const match = item.source.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/);
-    const videoId = match?.[1];
-    if (videoId) {
-      iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=1&disablekb=1&fs=1&playsinline=1`;
-      previewDiv.appendChild(iframe);
-      // YouTubeプレイヤーAPIが準備できるまで待機
-      setTimeout(() => setupYouTubePreviewSync(videoId), 1000);
-    }
-  } else if (item.kind === 'vimeo') {
-    const match = item.source.match(/vimeo\.com\/(\d+)/);
-    const videoId = match?.[1];
-    if (videoId) {
-      iframe.src = `https://player.vimeo.com/video/${videoId}`;
-      previewDiv.appendChild(iframe);
-    }
-  }
-}
-
-function setupYouTubePreviewSync(videoId: string): void {
-  const iframe = document.getElementById('preview-player-iframe') as HTMLIFrameElement;
-  if (!iframe || !window.YT) return;
-
-  previewYouTubePlayer = new window.YT.Player(iframe, {
-    events: {
-      onStateChange: (event: any) => {
-        // プレビューの再生状態が変わったら、出力ウィンドウに送信
-        const state = event.data;
-        if (state === window.YT.PlayerState.PLAYING) {
-          sendOut({ type: 'play' });
-        } else if (state === window.YT.PlayerState.PAUSED) {
-          sendOut({ type: 'pause' });
-        }
-      },
-      onError: (event: any) => {
-        console.error('Preview player error:', event.data);
-      },
-    },
-  });
+  // YouTubeやVimeoの場合でもiframeは表示しない（スクリーンショットを使用）
+  if (iframe) iframe.remove();
+  preview.hidden = false;
+  previewYouTubePlayer = null;
+  lastPreviewItemId = null;
 }
 
 function renderMainStatus(): void {
@@ -270,6 +210,12 @@ function renderMainList(): void {
     li.classList.toggle('selected', item.id === selectedMainId);
     li.classList.toggle('missing', item.kind === 'local' && missing.has(item.source));
     li.title = item.source;
+
+    // アイテムをクリックして再生
+    li.addEventListener('click', (e) => {
+      if (e.target instanceof HTMLSelectElement) return; // select要素のクリックは無視
+      playMain(item.id);
+    });
 
     const [label, cls] = kindLabel(item);
     const kind = document.createElement('span');
